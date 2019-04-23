@@ -3,8 +3,8 @@ defmodule SecretsManagerProvider do
   alias SecretsManagerProvider.{Configuration, Transformation, SecretsManager}
 
   def init([path]) do
-    Application.ensure_all_started(:hackney)
-    Application.ensure_all_started(:ex_aws)
+    {:ok, _deps} = Application.ensure_all_started(:hackney)
+    {:ok, _deps} = Application.ensure_all_started(:ex_aws)
 
     path
     |> SecretsManager.get()
