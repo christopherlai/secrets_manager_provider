@@ -4,8 +4,8 @@ defmodule SecretsManagerProvider.MixProject do
   def project do
     [
       app: :secrets_manager_provider,
-      version: "0.1.0",
-      elixir: "~> 1.8",
+      version: "0.2.0",
+      elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -22,7 +22,6 @@ defmodule SecretsManagerProvider.MixProject do
   defp deps do
     [
       {:configparser_ex, "~> 4.0", override: true, only: [:dev, :test]},
-      {:distillery, "~> 2.0"},
       {:ex_aws, "~> 2.1", override: true},
       {:ex_aws_ssm, "~> 2.0"},
       {:ex_doc, "~> 0.20.2"},

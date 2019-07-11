@@ -1,8 +1,8 @@
 defmodule SecretsManagerProvider do
-  use Mix.Releases.Config.Provider
+  use Mix.Config
   alias SecretsManagerProvider.{Configuration, Transformation, SecretsManager}
 
-  def init([path]) do
+  def init(path) do
     {:ok, _deps} = Application.ensure_all_started(:hackney)
     {:ok, _deps} = Application.ensure_all_started(:ex_aws)
 
