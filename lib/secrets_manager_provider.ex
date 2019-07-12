@@ -1,7 +1,7 @@
 defmodule SecretsManagerProvider do
   @behaviour Config.Provider
 
-  alias SecretsManagerProvider.{Configuration, Transformation, SecretsManager}
+  alias SecretsManagerProvider.{Transformation, SecretsManager}
 
   def init(path) when is_binary(path), do: path
 
