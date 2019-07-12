@@ -1,15 +1,20 @@
 defmodule SecretsManagerProvider do
-  use Mix.Config
+  @behaviour Config.Provider
+
   alias SecretsManagerProvider.{Configuration, Transformation, SecretsManager}
 
-  def init(path) do
+  def init(path) when is_binary(path), do: path
+
+  def load(config, path) do
     {:ok, _deps} = Application.ensure_all_started(:hackney)
     {:ok, _deps} = Application.ensure_all_started(:ex_aws)
 
-    path
-    |> SecretsManager.get()
-    |> Toml.decode!()
-    |> Transformation.to_keyword()
-    |> Configuration.persist()
+    secrets =
+      path
+      |> SecretsManager.get()
+      |> Toml.decode!()
+      |> Transformation.to_keyword()
+
+    Config.Reader.merge(config, secrets)
   end
 end
