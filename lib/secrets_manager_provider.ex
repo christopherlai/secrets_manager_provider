@@ -9,9 +9,14 @@ defmodule SecretsManagerProvider do
     {:ok, _deps} = Application.ensure_all_started(:hackney)
     {:ok, _deps} = Application.ensure_all_started(:ex_aws)
 
+    secrets = SecretsManager.get(path)
+
+    load_config(config, secrets)
+  end
+
+  def load_config(config, secrets) do
     secrets =
-      path
-      |> SecretsManager.get()
+      secrets
       |> Toml.decode!()
       |> Transformation.to_keyword()
 
