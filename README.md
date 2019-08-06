@@ -21,7 +21,8 @@ config :secrets_manager_provider, :parser, Jason
 ```
 
 ## Code Status
-[![Build Status](https://travis-ci.org/christopherlai/secrets_manager_provider.svg?branch=master)](https://travis-ci.org/christopherlai/secrets_manager_provider)[![Hex pm](https://img.shields.io/hexpm/v/secrets_manager_provider.svg?style=flat)](https://hex.pm/packages/secrets_manager_provider)
+[![Build Status](https://travis-ci.org/christopherlai/secrets_manager_provider.svg?branch=master)](https://travis-ci.org/christopherlai/secrets_manager_provider)
+[![Hex pm](https://img.shields.io/hexpm/v/secrets_manager_provider.svg?style=flat)](https://hex.pm/packages/secrets_manager_provider)
 
 ## License
 
