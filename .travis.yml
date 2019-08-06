@@ -1,0 +1,10 @@
+language: elixir
+elixir: 1.9
+
+otp_release:
+  - 22
+
+script:
+  - mix test
+  - mix test --cover
+  - mix credo
