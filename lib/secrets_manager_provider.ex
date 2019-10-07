@@ -28,19 +28,12 @@ defmodule SecretsManagerProvider do
     extract_secrets_from_path(client, parser, path)
   end
 
-  defp extract_secrets(client, parser, keywords) when is_list(keywords) do
-    secret_type = detect_secret_type(keywords)
-    extract_secrets_from_type(client, parser, keywords, secret_type)
-  end
-
-  defp extract_secrets_from_type(client, parser, keywords, :env_var) do
-    var_name = Keyword.get(keywords, :env_var)
+  defp extract_secrets(client, parser, {:env_var, var_name}) do
     path = System.get_env(var_name)
     extract_secrets_from_path(client, parser, path)
   end
 
-  defp extract_secrets_from_type(client, parser, keywords, :path) do
-    path = Keyword.get(keywords, :path)
+  defp extract_secrets(client, parser, {:path, path}) do
     extract_secrets_from_path(client, parser, path)
   end
 
@@ -50,8 +43,4 @@ defmodule SecretsManagerProvider do
     |> parser.decode!()
     |> to_keyword()
   end
-
-  defp detect_secret_type(env_var: _var_name), do: :env_var
-  defp detect_secret_type(path: _var_name), do: :path
-  defp detect_secret_type(_), do: nil
 end
