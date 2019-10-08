@@ -1,7 +1,7 @@
 defmodule SecretsManagerProvider.MixProject do
   use Mix.Project
 
-  @version "0.4.0"
+  @version "0.4.1"
   @url "https://github.com/christopherlai/secrets_manager_provider"
   @name "SecretsManagerProvider"
 
