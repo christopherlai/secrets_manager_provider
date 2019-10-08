@@ -28,7 +28,7 @@ defmodule SecretsManagerProvider do
     extract_secrets_from_path(client, parser, path)
   end
 
-  defp extract_secrets(client, parser, {:env_var, var_name}) do
+  defp extract_secrets(client, parser, {:env, var_name}) do
     path = System.get_env(var_name)
     extract_secrets_from_path(client, parser, path)
   end

@@ -7,7 +7,7 @@ defmodule SecretsManagerProviderKeywordsTest do
 
   describe "init/1" do
     test "returns a given keywords" do
-      assert SecretsManagerProvider.init({:env_var, "SOME_VAR"}) == {:env_var, "SOME_VAR"}
+      assert SecretsManagerProvider.init({:env, "SOME_VAR"}) == {:env, "SOME_VAR"}
     end
   end
 
@@ -31,11 +31,11 @@ defmodule SecretsManagerProviderKeywordsTest do
     end
 
     test "returns keyword configurations from env var", %{expected: expected} do
-      assert SecretsManagerProvider.load([], {:env_var, "SOME_VAR"}) == expected
+      assert SecretsManagerProvider.load([], {:env, "SOME_VAR"}) == expected
     end
 
     test "returns merged keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], {:env_var, "SOME_VAR"}) ==
+      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], {:env, "SOME_VAR"}) ==
                expected
     end
   end
