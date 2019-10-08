@@ -22,6 +22,6 @@ defmodule SecretsManagerProvider.ExAwsClient do
   end
 
   defp handle_response({:error, reason}) do
-    Logger.error("Unable to fetch secrests from AWS. Reason: #{inspect(reason)}")
+    Logger.error("Unable to fetch secrets from AWS. Reason: #{inspect(reason)}")
   end
 end
