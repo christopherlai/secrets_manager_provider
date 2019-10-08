@@ -1,14 +1,14 @@
 # SecretsManagerProvider
 
-AWS Secrets Manager ConfigProvider for Elixir Releases.
+AWS Secrets Manager ConfigProvider for Elixir Releases. It provides runtime configuration by fetching a parameter upon application start from the [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html). 
 
 ## Installation
 The package can be installed by adding `secrets_manager_provider` to your list of dependencies in `mix.exs` along with `toml` or `jason`.
 
 ```elixir
 defp deps do
-  {:secrets_manager_provider, "~> 0.0.0"},
-  {:toml, "~> 0.0.0"}
+  {:secrets_manager_provider, "~> 0.4.0"},
+  {:toml, "~> 0.5.0"}
 end
 ```
 
@@ -18,6 +18,65 @@ parser that responds to `decode!/1`
 
 ```elixir
 config :secrets_manager_provider, :parser, Jason
+```
+
+This library by default uses ExAws to call the AWS api's. See [AWS-key-configuration](https://github.com/ex-aws/ex_aws#aws-key-configuration) on how to configure it. Ensure that you set the right region.
+
+The IAM-user making the api-call needs to have `ssm:GetParameter` permission on the resource.
+
+## Adding Config Provider
+Add the following to your `mix.exs` configuration. In this case the name of the app is `:example`.
+
+```elixir
+  def project do
+    [
+      app: :example,
+      ...
+      releases: [
+        example: [
+          config_providers: [{SecretsManagerProvider, "parameter_name"}]
+        ]
+      ]
+    ]
+  end
+```
+Where `parameter_name` is the name of the parameter in the AWS Parameter Store. The value of this parameter should be a string and can be in either in `toml`, `json` or another format, provided a parser can parse it.
+
+E.g. if your application name is `:example` and you want to retrieve the database url from the parameter store, the value of the parameter would be something like:
+
+#### Toml 
+Use the default parser
+```toml
+[example]
+  [example."Example.Repo"]
+  url = "ecto://postgres:postgres@localhost/example_dev"
+```
+
+#### JSON
+Set the `:parser` to Jason
+```json
+{
+  "example": {
+      "Example.Repo": { "url": "ecto://postgres:postgres@localhost/example_dev"}
+  }
+}
+```
+
+
+The string keys are converted to atoms, and the result is merged with the existing config.
+
+### Parameter name
+The name of the parameter can be provided by its path: 
+```elixir
+config_providers: [{SecretsManagerProvider, "parameter_name"}]
+# or equivalently 
+config_providers: [{SecretsManagerProvider, {:path, "parameter_name"}}].
+``` 
+
+Alternatively, it can also be provided by an environment variable:
+
+```elixir
+config_providers: [{SecretsManagerProvider, {:env, "PARAM_NAME"}}]
 ```
 
 ## Code Status
