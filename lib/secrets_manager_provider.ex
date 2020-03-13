@@ -26,7 +26,7 @@ defmodule SecretsManagerProvider do
   end
 
   defp get_path({:env, name}), do: System.get_env(name)
-  defp get_path({:path, path}), do: path
+  defp get_path({:name, path}), do: path
 
   defp merge_configs(secrets, config) do
     Config.Reader.merge(config, secrets)
