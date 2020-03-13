@@ -1,5 +1,5 @@
 # SecretsManagerProvider
-Secrets Manager Provider is an Elixir Release provide that loads runtime configurations from [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/).
+Secrets Manager Provider is an Elixir Release provider that loads runtime configurations from [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/).
 
 ## Installation
 Add `secrets_manager_provider` to your `deps/0` in your `mix.exs` file. A TOML (`toml`) or JSON (`jason`) library will also need to be included. This can be any library, as long as it implements `decode!/1`. 
@@ -60,12 +60,11 @@ end
 ```
 
 The name of the secret sorted in AWS Secrets Manager can provided in in two ways.
-1. Provide the name directly in the release configurations by define `{:name, "secret/name}` for the provider.
-2. Provide the name of a ENV variable where the secret name can be found, `{:env, "secret/name}`. This option is useful when your release is run in different environments. Make sure this provide ENV variable is set on the machine or container.
+1. Provide the name directly in the release configurations by using the tuple `{:name, "secret/name"}` for the provider.
+2. Provide the name of a ENV variable where the secret name can be found, `{:env, "secret/name"}`. This option is useful when your release is run in different environments. Make sure the ENV variable is set on the machine or container before starting the release.
 
 You can store your runtime configurations in AWS Secrets Manager in any format. Below are two examples with TOML and JSON.
 ### Toml  (Default)
-=
 ```toml
 [example]
 somekey = "key"
