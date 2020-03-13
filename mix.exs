@@ -31,14 +31,14 @@ defmodule SecretsManagerProvider.MixProject do
   defp deps do
     [
       {:configparser_ex, "~> 4.0", override: true, only: [:dev, :test]},
-      {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_aws, "~> 2.0"},
       {:ex_aws_ssm, "~> 2.0"},
-      {:ex_doc, "~> 0.20.2", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:hackney, "~> 1.15"},
       {:jason, "~> 1.1", optional: true},
       {:mox, "~> 0.5.1", only: [:test]},
-      {:toml, "~> 0.5.2", optional: true}
+      {:toml, "~> 0.6", optional: true}
     ]
   end
 
