@@ -12,14 +12,12 @@ defmodule SecretsManagerProvider.ExAwsClient do
   @impl true
   def get_secrets(path) do
     path
-    |> ExAws.SSM.get_parameter(with_decryption: true)
+    |> ExAws.SecretsManager.get_secret_value()
     |> ExAws.request()
     |> handle_response()
   end
 
-  defp handle_response({:ok, resp}) do
-    get_in(resp, ["Parameter", "Value"])
-  end
+  defp handle_response({:ok, %{"SecretString" => secret}}), do: secret
 
   defp handle_response({:error, reason}) do
     Logger.error("Unable to fetch secrets from AWS. Reason: #{inspect(reason)}")

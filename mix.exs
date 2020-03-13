@@ -33,7 +33,7 @@ defmodule SecretsManagerProvider.MixProject do
       {:configparser_ex, "~> 4.0", override: true, only: [:dev, :test]},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_aws, "~> 2.0"},
-      {:ex_aws_ssm, "~> 2.0"},
+      {:ex_aws_secretsmanager, "~> 2.0"},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:hackney, "~> 1.15"},
       {:jason, "~> 1.1", optional: true},
