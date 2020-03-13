@@ -1,59 +1,80 @@
 # SecretsManagerProvider
-
-AWS Secrets Manager ConfigProvider for Elixir Releases. It provides runtime configuration by fetching a parameter upon application start from the [AWS Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html). 
+Secrets Manager Provider is an Elixir Release provide that loads runtime configurations from [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/).
 
 ## Installation
-The package can be installed by adding `secrets_manager_provider` to your list of dependencies in `mix.exs` along with `toml` or `jason`.
+Add `secrets_manager_provider` to your `deps/0` in your `mix.exs` file. A TOML (`toml`) or JSON (`jason`) library will also need to be included. This can be any library, as long as it implements `decode!/1`. 
 
 ```elixir
 defp deps do
-  {:secrets_manager_provider, "~> 0.4.0"},
-  {:toml, "~> 0.5.0"}
+  {:secrets_manager_provider, "~> 0.5"},
+  {:toml, "~> 0.6"}
 end
 ```
 
 ## Configuration
-`toml` is used as the default parser, the parser can be configured to use any
-parser that responds to `decode!/1`
+### Elixir
+`toml` is the default parser library used by Secrets Manager Provider. Feel free to swap this out with a library of your choice.
 
 ```elixir
 config :secrets_manager_provider, :parser, Jason
 ```
 
-This library by default uses ExAws to call the AWS api's. See [AWS-key-configuration](https://github.com/ex-aws/ex_aws#aws-key-configuration) on how to configure it. Ensure that you set the right region.
+### AWS
+[ExAws](https://hexdocs.pm/ex_aws/ExAws.html) is the default client used to get secrets from AWS Secrets Manager. Configuration options for `ExAws` can be found [here](https://hexdocs.pm/ex_aws/ExAws.html#module-aws-key-configuration).
 
-The IAM-user making the api-call needs to have `ssm:GetParameter` permission on the resource.
+The action `secretsmanager:GetSecretValue` must be added to your IAM Role or User. Below is an example of this policy:
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid" : "Stmt2GetSecretValue",  
+            "Effect": "Allow",
+            "Action": [ "secretsmanager:GetSecretValue" ],
+            "Resource": "arn:aws:secretsmanager:<region>:<account_id>:secret:<secret-name>",
+            "Condition" : { 
+                "ForAnyValue:StringLike" : {
+                    "secretsmanager:VersionStage" : "AWSCURRENT" 
+                } 
+            }
+        }
+    ]
+}
+```
 
-## Adding Config Provider
-Add the following to your `mix.exs` configuration. In this case the name of the app is `:example`.
+## Usage
+Add the following to your `mix.exs` configuration. In this example, the name of the app is `:example`.
 
 ```elixir
-  def project do
-    [
-      app: :example,
-      ...
-      releases: [
-        example: [
-          config_providers: [{SecretsManagerProvider, "parameter_name"}]
-        ]
+def project do
+  [
+    app: :example,
+    ...
+    releases: [ 
+      example: [
+        config_providers: [{SecretsManagerProvider, {:name, "name"}]
       ]
     ]
-  end
+  ]
+end
 ```
-Where `parameter_name` is the name of the parameter in the AWS Parameter Store. The value of this parameter should be a string and can be in either in `toml`, `json` or another format, provided a parser can parse it.
 
-E.g. if your application name is `:example` and you want to retrieve the database url from the parameter store, the value of the parameter would be something like:
+The name of the secret sorted in AWS Secrets Manager can provided in in two ways.
+1. Provide the name directly in the release configurations by define `{:name, "secret/name}` for the provider.
+2. Provide the name of a ENV variable where the secret name can be found, `{:env, "secret/name}`. This option is useful when your release is run in different environments. Make sure this provide ENV variable is set on the machine or container.
 
-#### Toml 
-Use the default parser
+You can store your runtime configurations in AWS Secrets Manager in any format. Below are two examples with TOML and JSON.
+### Toml  (Default)
+=
 ```toml
 [example]
-  [example."Example.Repo"]
-  url = "ecto://postgres:postgres@localhost/example_dev"
+somekey = "key"
+
+[example."Example.Repo"]
+url = "ecto://postgres:postgres@localhost/example_dev"
 ```
 
-#### JSON
-Set the `:parser` to Jason
+### JSON
 ```json
 {
   "example": {
@@ -62,29 +83,13 @@ Set the `:parser` to Jason
 }
 ```
 
-
-The string keys are converted to atoms, and the result is merged with the existing config.
-
-### Parameter name
-The name of the parameter can be provided by its path: 
-```elixir
-config_providers: [{SecretsManagerProvider, "parameter_name"}]
-# or equivalently 
-config_providers: [{SecretsManagerProvider, {:path, "parameter_name"}}].
-``` 
-
-Alternatively, it can also be provided by an environment variable:
-
-```elixir
-config_providers: [{SecretsManagerProvider, {:env, "PARAM_NAME"}}]
-```
+The keys are converted to atoms, and the result are merged with existing configs.
 
 ## Code Status
-[![Build Status](https://travis-ci.org/christopherlai/secrets_manager_provider.svg?branch=master)](https://travis-ci.org/christopherlai/secrets_manager_provider)
-[![Hex pm](https://img.shields.io/hexpm/v/secrets_manager_provider.svg?style=flat)](https://hex.pm/packages/secrets_manager_provider)
+[![Build Status](#)(https://travis-ci.org/christopherlai/secrets_manager_provider.svg?branch=master)](https://travis-ci.org/christopherlai/secrets_manager_provider)
+[![Hex pm](#)(https://img.shields.io/hexpm/v/secrets_manager_provider.svg?style=flat)](https://hex.pm/packages/secrets_manager_provider)
 
 ## License
-
 The MIT License (MIT)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:

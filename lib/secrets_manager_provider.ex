@@ -6,7 +6,7 @@ defmodule SecretsManagerProvider do
   @behaviour Config.Provider
 
   import SecretsManagerProvider.Utils, only: [to_keyword: 1]
-  alias SecretsManagerProvider.ExAwsClient
+  alias SecretsManagerProvider.Configuration
 
   @impl true
   def init(args), do: args
@@ -15,32 +15,20 @@ defmodule SecretsManagerProvider do
   def load(config, args) do
     {:ok, _deps} = Application.ensure_all_started(:hackney)
     {:ok, _deps} = Application.ensure_all_started(:ex_aws)
+    configuration = Configuration.new()
 
-    client = Application.get_env(:secrets_manager_provider, :client, ExAwsClient)
-    parser = Application.get_env(:secrets_manager_provider, :parser, Toml)
-
-    secrets = extract_secrets(client, parser, args)
-
-    Config.Reader.merge(config, secrets)
-  end
-
-  defp extract_secrets(client, parser, path) when is_binary(path) do
-    extract_secrets_from_path(client, parser, path)
-  end
-
-  defp extract_secrets(client, parser, {:env, var_name}) do
-    path = System.get_env(var_name)
-    extract_secrets_from_path(client, parser, path)
-  end
-
-  defp extract_secrets(client, parser, {:path, path}) do
-    extract_secrets_from_path(client, parser, path)
-  end
-
-  defp extract_secrets_from_path(client, parser, path) when is_binary(path) do
-    path
-    |> client.get_secrets()
-    |> parser.decode!()
+    args
+    |> get_path()
+    |> configuration.client.get_secrets()
+    |> configuration.parser.decode!()
     |> to_keyword()
+    |> merge_configs(config)
+  end
+
+  defp get_path({:env, name}), do: System.get_env(name)
+  defp get_path({:name, path}), do: path
+
+  defp merge_configs(secrets, config) do
+    Config.Reader.merge(config, secrets)
   end
 end

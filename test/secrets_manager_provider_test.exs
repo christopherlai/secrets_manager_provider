@@ -7,7 +7,7 @@ defmodule SecretsManagerProviderTest do
 
   describe "init/1" do
     test "returns the given path" do
-      assert SecretsManagerProvider.init("/path/to") == "/path/to"
+      assert SecretsManagerProvider.init({:name, "/path/to"}) == {:name, "/path/to"}
     end
   end
 
@@ -30,11 +30,11 @@ defmodule SecretsManagerProviderTest do
     end
 
     test "returns keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([], "") == expected
+      assert SecretsManagerProvider.load([], {:name, ""}) == expected
     end
 
     test "returns merged keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], "") == expected
+      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], {:name, ""}) == expected
     end
   end
 
@@ -59,11 +59,11 @@ defmodule SecretsManagerProviderTest do
     end
 
     test "returns keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([], "") == expected
+      assert SecretsManagerProvider.load([], {:env, ""}) == expected
     end
 
     test "returns merged keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], "") == expected
+      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], {:env, ""}) == expected
     end
   end
 end
