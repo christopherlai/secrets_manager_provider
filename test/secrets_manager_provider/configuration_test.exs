@@ -14,7 +14,8 @@ defmodule SecretsManagerProvider.ConfigurationTest do
              }
     end
 
-    test ~s("when config field is given in the `{:system, "ENV_NAME"}` format, get environment value) do
+    test ~s(when config field is given in the `{:system, "ENV_NAME"}` format, ) <>
+           "get environment value" do
       System.put_env("SECRET_NAME", "secret/name")
       config = Configuration.new([{:name, {:system, "SECRET_NAME"}}])
 

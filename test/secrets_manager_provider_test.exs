@@ -6,7 +6,7 @@ defmodule SecretsManagerProviderTest do
   setup :verify_on_exit!
 
   setup do
-    {:ok, %{name: "/path/to"}}
+    {:ok, name: "/path/to"}
   end
 
   describe "init/1" do
@@ -33,7 +33,7 @@ defmodule SecretsManagerProviderTest do
 
       expected = [toplevel: [sublevel: "config"]]
 
-      {:ok, %{args: args, expected: expected}}
+      {:ok, args: args, expected: expected}
     end
 
     test "returns keyword configurations", %{args: args, expected: expected} do
@@ -65,7 +65,7 @@ defmodule SecretsManagerProviderTest do
 
       expected = [toplevel: [sublevel: "config"]]
 
-      {:ok, %{args: args, expected: expected}}
+      {:ok, args: args, expected: expected}
     end
 
     test "returns keyword configurations", %{args: args, expected: expected} do

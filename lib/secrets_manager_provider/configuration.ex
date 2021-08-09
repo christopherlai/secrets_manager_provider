@@ -24,6 +24,6 @@ defmodule SecretsManagerProvider.Configuration do
   end
 
   @spec maybe_get_env(args()) :: args()
-  def maybe_get_env({name, {:system, env}}), do: {name, System.get_env(env)}
+  def maybe_get_env({:name, {:system, env}}), do: {:name, System.get_env(env)}
   def maybe_get_env(field), do: field
 end

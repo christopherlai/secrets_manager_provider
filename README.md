@@ -31,7 +31,7 @@ def project do
 end
 ```
 
-Any configuration can provided in in two ways.
+The secret name configuration can provided in in two ways.
 
 1. Provide the configuration value directly in the release configurations by using a tuple `{:name, "secret/name"}`.
 2. Provide the name of a ENV variable where the configuration can be found, `{:name, {:system, "SECRET_NAME"}}`. This option is useful when your release is run in different environments. Make sure the ENV variable is set on the machine or container before starting the release.
