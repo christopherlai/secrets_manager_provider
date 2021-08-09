@@ -2,6 +2,8 @@
 
 Secrets Manager Provider is an Elixir Release provider that loads runtime configurations from [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/).
 
+- [Upgrading to 0.6](docs/upgrading_to_0_6.md)
+
 ## Installation
 
 Add `secrets_manager_provider` to your `deps/0` in your `mix.exs` file. A TOML (`toml`) or JSON (`jason`) library will also need to be included. This can be any library, as long as it implements `decode!/1`.
