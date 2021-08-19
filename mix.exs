@@ -1,7 +1,7 @@
 defmodule SecretsManagerProvider.MixProject do
   use Mix.Project
 
-  @version "0.5.0"
+  @version "0.6.0"
   @url "https://github.com/christopherlai/secrets_manager_provider"
   @name "SecretsManagerProvider"
 
@@ -47,7 +47,7 @@ defmodule SecretsManagerProvider.MixProject do
       main: @name,
       source_ref: "v#{@version}",
       source_url: @url,
-      extras: ["README.md"]
+      extras: ["README.md", "docs/upgrade_to_0_6.md"]
     ]
   end
 
