@@ -1,8 +1,12 @@
 # SecretsManagerProvider
+
 Secrets Manager Provider is an Elixir Release provider that loads runtime configurations from [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/).
 
+- [Upgrading to 0.6](docs/upgrading_to_0_6.md)
+
 ## Installation
-Add `secrets_manager_provider` to your `deps/0` in your `mix.exs` file. A TOML (`toml`) or JSON (`jason`) library will also need to be included. This can be any library, as long as it implements `decode!/1`. 
+
+Add `secrets_manager_provider` to your `deps/0` in your `mix.exs` file. A TOML (`toml`) or JSON (`jason`) library will also need to be included. This can be any library, as long as it implements `decode!/1`.
 
 ```elixir
 defp deps do
@@ -11,38 +15,8 @@ defp deps do
 end
 ```
 
-## Configuration
-### Elixir
-`toml` is the default parser library used by Secrets Manager Provider. Feel free to swap this out with a library of your choice.
-
-```elixir
-config :secrets_manager_provider, :parser, Jason
-```
-
-### AWS
-[ExAws](https://hexdocs.pm/ex_aws/ExAws.html) is the default client used to get secrets from AWS Secrets Manager. Configuration options for `ExAws` can be found [here](https://hexdocs.pm/ex_aws/ExAws.html#module-aws-key-configuration).
-
-The action `secretsmanager:GetSecretValue` must be added to your IAM Role or User. Below is an example of this policy:
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid" : "Stmt2GetSecretValue",  
-            "Effect": "Allow",
-            "Action": [ "secretsmanager:GetSecretValue" ],
-            "Resource": "arn:aws:secretsmanager:<region>:<account_id>:secret:<secret-name>",
-            "Condition" : { 
-                "ForAnyValue:StringLike" : {
-                    "secretsmanager:VersionStage" : "AWSCURRENT" 
-                } 
-            }
-        }
-    ]
-}
-```
-
 ## Usage
+
 Add the following to your `mix.exs` configuration. In this example, the name of the app is `:example`.
 
 ```elixir
@@ -50,21 +24,63 @@ def project do
   [
     app: :example,
     ...
-    releases: [ 
+    releases: [
       example: [
-        config_providers: [{SecretsManagerProvider, {:name, "name"}]
+        config_providers: [{SecretsManagerProvider, [{:name, "secret/name"}]]
       ]
     ]
   ]
 end
 ```
 
-The name of the secret sorted in AWS Secrets Manager can provided in in two ways.
-1. Provide the name directly in the release configurations by using the tuple `{:name, "secret/name"}` for the provider.
-2. Provide the name of a ENV variable where the secret name can be found, `{:env, "secret/name"}`. This option is useful when your release is run in different environments. Make sure the ENV variable is set on the machine or container before starting the release.
+The secret name configuration can provided in in two ways.
 
-You can store your runtime configurations in AWS Secrets Manager in any format. Below are two examples with TOML and JSON.
-### Toml  (Default)
+1. Provide the configuration value directly in the release configurations by using a tuple `{:name, "secret/name"}`.
+2. Provide the name of a ENV variable where the configuration can be found, `{:name, {:system, "SECRET_NAME"}}`. This option is useful when your release is run in different environments. Make sure the ENV variable is set on the machine or container before starting the release.
+
+## Configuration
+
+### Client
+
+[ExAws](https://hexdocs.pm/ex_aws/ExAws.html) is the default client used to get secrets from AWS Secrets Manager. Configuration options for `ExAws` can be found [here](https://hexdocs.pm/ex_aws/ExAws.html#module-aws-key-configuration).
+
+The action `secretsmanager:GetSecretValue` must be added to your IAM Role or User. Below is an example of this policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Stmt2GetSecretValue",
+      "Effect": "Allow",
+      "Action": ["secretsmanager:GetSecretValue"],
+      "Resource": "arn:aws:secretsmanager:<region>:<account_id>:secret:<secret-name>",
+      "Condition": {
+        "ForAnyValue:StringLike": {
+          "secretsmanager:VersionStage": "AWSCURRENT"
+        }
+      }
+    }
+  ]
+}
+```
+
+### Name
+
+The name or arn of you secret.
+
+### Parser
+
+You can store your runtime configurations in AWS Secrets Manager in any format. `toml` is the default parser library used by Secrets Manager Provider. Feel free to swap this out with a library of your choice.
+
+```elixir
+config_providers: [{SecretsManagerProvider, [{:parser, Jason}]]
+```
+
+Below are two examples with TOML and JSON.
+
+#### Toml (Default)
+
 ```toml
 [example]
 somekey = "key"
@@ -73,11 +89,12 @@ somekey = "key"
 url = "ecto://postgres:postgres@localhost/example_dev"
 ```
 
-### JSON
+#### JSON
+
 ```json
 {
   "example": {
-      "Example.Repo": { "url": "ecto://postgres:postgres@localhost/example_dev"}
+    "Example.Repo": { "url": "ecto://postgres:postgres@localhost/example_dev" }
   }
 }
 ```
@@ -85,10 +102,12 @@ url = "ecto://postgres:postgres@localhost/example_dev"
 The keys are converted to atoms, and the result are merged with existing configs.
 
 ## Code Status
-[![Build Status](#)(https://travis-ci.org/christopherlai/secrets_manager_provider.svg?branch=master)](https://travis-ci.org/christopherlai/secrets_manager_provider)
-[![Hex pm](#)(https://img.shields.io/hexpm/v/secrets_manager_provider.svg?style=flat)](https://hex.pm/packages/secrets_manager_provider)
+
+[![Build Status](https://travis-ci.org/christopherlai/secrets_manager_provider.svg?branch=master)](https://travis-ci.org/christopherlai/secrets_manager_provider)
+[![Hex pm](https://img.shields.io/hexpm/v/secrets_manager_provider.svg?style=flat)](https://hex.pm/packages/secrets_manager_provider)
 
 ## License
+
 The MIT License (MIT)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:

@@ -3,21 +3,27 @@ defmodule SecretsManagerProvider.Configuration do
   Struct for managing configurations like :client and :parser.
   """
 
+  @type args :: [{atom(), any()}]
   @type t :: %__MODULE__{
           client: module(),
+          name: String.t(),
           parser: module()
         }
 
   defstruct client: SecretsManagerProvider.ExAwsClient,
+            name: nil,
             parser: Toml
 
   @doc """
   Returns a new `Configuration` struct with defaults.
   """
-  @spec new :: t()
-  def new do
-    fields = Application.get_all_env(:secrets_manager_provider)
-
-    struct(__MODULE__, fields)
+  @spec new(args()) :: t()
+  def new(args) do
+    fields = Enum.into(args, %{}, &maybe_get_env/1)
+    struct!(__MODULE__, fields)
   end
+
+  @spec maybe_get_env(args()) :: args()
+  def maybe_get_env({:name, {:system, env}}), do: {:name, System.get_env(env)}
+  def maybe_get_env(field), do: field
 end

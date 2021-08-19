@@ -5,19 +5,26 @@ defmodule SecretsManagerProviderTest do
 
   setup :verify_on_exit!
 
+  setup do
+    {:ok, name: "/path/to"}
+  end
+
   describe "init/1" do
-    test "returns the given path" do
-      assert SecretsManagerProvider.init({:name, "/path/to"}) == {:name, "/path/to"}
+    test "returns the given path", %{name: name} do
+      assert SecretsManagerProvider.init([{:name, name}]) == [{:name, name}]
     end
   end
 
   describe "load/2 with TOML" do
-    setup do
-      Application.put_env(:secrets_manager_provider, :client, SecretsManagerProvider.MockClient)
-      Application.put_env(:secrets_manager_provider, :parser, Toml)
+    setup %{name: name} do
+      args = [
+        {:client, SecretsManagerProvider.MockClient},
+        {:name, name},
+        {:parser, Toml}
+      ]
 
       SecretsManagerProvider.MockClient
-      |> expect(:get_secrets, fn _path ->
+      |> expect(:get_secrets, fn ^name ->
         """
         [toplevel]
         sublevel = "config"
@@ -26,25 +33,28 @@ defmodule SecretsManagerProviderTest do
 
       expected = [toplevel: [sublevel: "config"]]
 
-      {:ok, %{expected: expected}}
+      {:ok, args: args, expected: expected}
     end
 
-    test "returns keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([], {:name, ""}) == expected
+    test "returns keyword configurations", %{args: args, expected: expected} do
+      assert SecretsManagerProvider.load([], args) == expected
     end
 
-    test "returns merged keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], {:name, ""}) == expected
+    test "returns merged keyword configurations", %{args: args, expected: expected} do
+      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], args) == expected
     end
   end
 
   describe "load/2 with JSON" do
-    setup do
-      Application.put_env(:secrets_manager_provider, :client, SecretsManagerProvider.MockClient)
-      Application.put_env(:secrets_manager_provider, :parser, Jason)
+    setup %{name: name} do
+      args = [
+        {:client, SecretsManagerProvider.MockClient},
+        {:name, name},
+        {:parser, Jason}
+      ]
 
       SecretsManagerProvider.MockClient
-      |> expect(:get_secrets, fn _path ->
+      |> expect(:get_secrets, fn ^name ->
         """
         {"toplevel": {
           "sublevel": "config"
@@ -55,15 +65,15 @@ defmodule SecretsManagerProviderTest do
 
       expected = [toplevel: [sublevel: "config"]]
 
-      {:ok, %{expected: expected}}
+      {:ok, args: args, expected: expected}
     end
 
-    test "returns keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([], {:env, ""}) == expected
+    test "returns keyword configurations", %{args: args, expected: expected} do
+      assert SecretsManagerProvider.load([], args) == expected
     end
 
-    test "returns merged keyword configurations", %{expected: expected} do
-      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], {:env, ""}) == expected
+    test "returns merged keyword configurations", %{args: args, expected: expected} do
+      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], args) == expected
     end
   end
 end
