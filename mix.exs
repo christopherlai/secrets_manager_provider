@@ -47,7 +47,7 @@ defmodule SecretsManagerProvider.MixProject do
       main: @name,
       source_ref: "v#{@version}",
       source_url: @url,
-      extras: ["README.md", "docs/upgrade_to_0_6.md"]
+      extras: ["README.md", "guides/upgrading_to_0_6.md"]
     ]
   end
 

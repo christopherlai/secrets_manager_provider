@@ -3,5 +3,5 @@ defmodule SecretsManagerProvider.SecretsManagerClient do
   A generic behaviour to implement Secret Manager Client for `SecretsManagerProvider`.
   """
 
-  @callback get_secrets(binary) :: binary
+  @callback get_secrets(binary()) :: binary()
 end
