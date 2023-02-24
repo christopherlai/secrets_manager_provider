@@ -16,6 +16,24 @@ defmodule SecretsManagerProvider.UtilsTest do
       assert Utils.to_keyword(%{"database" => %{"url" => "http://url/to"}}) == expected
     end
 
+    test "handles lists" do
+      expected = [
+        databases: [
+          [name: "shard1", url: "http://shard1"],
+          [name: "shard2", url: "http://shard2"]
+        ]
+      ]
+
+      config = %{
+        "databases" => [
+          %{"name" => "shard1", "url" => "http://shard1"},
+          %{"name" => "shard2", "url" => "http://shard2"}
+        ]
+      }
+
+      assert Utils.to_keyword(config) == expected
+    end
+
     test "returns the passed value if it is not a list or map" do
       assert Utils.to_keyword("http://database") == "http://database"
     end
