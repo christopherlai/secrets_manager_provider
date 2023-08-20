@@ -28,12 +28,12 @@ defmodule SecretsManagerProviderTest do
     setup %{name: name} do
       configuration = %Configuration{
         name: name,
-        client: SecretsManagerProvider.MockClient,
+        client: SecretsManagerProvider.MockAwsClient,
         http_client: SecretsManagerProvider.HackneyClient,
         parser: Toml
       }
 
-      SecretsManagerProvider.MockClient
+      SecretsManagerProvider.MockAwsClient
       |> expect(:get_secrets, fn ^name, ^configuration ->
         """
         [toplevel]
@@ -62,12 +62,12 @@ defmodule SecretsManagerProviderTest do
     setup %{name: name} do
       configuration = %Configuration{
         name: name,
-        client: SecretsManagerProvider.MockClient,
+        client: SecretsManagerProvider.MockAwsClient,
         http_client: SecretsManagerProvider.HackneyClient,
         parser: Jason
       }
 
-      SecretsManagerProvider.MockClient
+      SecretsManagerProvider.MockAwsClient
       |> expect(:get_secrets, fn ^name, ^configuration ->
         """
         {"toplevel": {
