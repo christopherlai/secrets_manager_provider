@@ -6,6 +6,6 @@ defmodule SecretsManagerProvider.Decoder do
   @callback decode!(iodata()) :: term() | no_return()
 
   def decode!(data, configuration) do
-    configuration.parser.decode!(data)
+    configuration.decoder.decode!(data)
   end
 end

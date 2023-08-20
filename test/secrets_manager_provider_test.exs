@@ -13,9 +13,9 @@ defmodule SecretsManagerProviderTest do
     test "returns the given path", %{name: name} do
       expected = %Configuration{
         name: name,
-        client: SecretsManagerProvider.ExAwsClient,
+        aws_client: SecretsManagerProvider.ExAwsClient,
         http_client: SecretsManagerProvider.HackneyClient,
-        parser: Toml
+        decoder: Toml
       }
 
       actual = SecretsManagerProvider.init([{:name, name}])
@@ -28,9 +28,9 @@ defmodule SecretsManagerProviderTest do
     setup %{name: name} do
       configuration = %Configuration{
         name: name,
-        client: SecretsManagerProvider.MockAwsClient,
+        aws_client: SecretsManagerProvider.MockAwsClient,
         http_client: SecretsManagerProvider.HackneyClient,
-        parser: Toml
+        decoder: Toml
       }
 
       SecretsManagerProvider.MockAwsClient
@@ -62,9 +62,9 @@ defmodule SecretsManagerProviderTest do
     setup %{name: name} do
       configuration = %Configuration{
         name: name,
-        client: SecretsManagerProvider.MockAwsClient,
+        aws_client: SecretsManagerProvider.MockAwsClient,
         http_client: SecretsManagerProvider.HackneyClient,
-        parser: Jason
+        decoder: Jason
       }
 
       SecretsManagerProvider.MockAwsClient

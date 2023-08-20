@@ -1,7 +1,7 @@
 defmodule SecretsManagerProvider.MixProject do
   use Mix.Project
 
-  @version "0.6.0"
+  @version "1.0.0-rc0"
   @url "https://github.com/christopherlai/secrets_manager_provider"
   @name "SecretsManagerProvider"
 
@@ -9,7 +9,7 @@ defmodule SecretsManagerProvider.MixProject do
     [
       app: :secrets_manager_provider,
       version: @version,
-      elixir: "~> 1.9",
+      elixir: "~> 1.12",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       docs: docs(),
@@ -47,7 +47,7 @@ defmodule SecretsManagerProvider.MixProject do
       main: @name,
       source_ref: "v#{@version}",
       source_url: @url,
-      extras: ["README.md", "guides/upgrading_to_0_6.md"]
+      extras: ["README.md", "guides/upgrading_to_1_0_0.md", "guides/upgrading_to_0_6.md"]
     ]
   end
 

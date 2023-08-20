@@ -2,7 +2,7 @@
 
 Secrets Manager Provider is an Elixir Release provider that loads runtime configurations from [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/).
 
-- [Upgrading to 0.6](guides/upgrading_to_0_6.md)
+- [Upgrading to 1.0.0](guides/upgrading_to_1_0_0.md)
 
 ## Installation
 

@@ -5,16 +5,16 @@ defmodule SecretsManagerProvider.Configuration do
 
   @type args :: [{atom(), any()}]
   @type t :: %__MODULE__{
-          client: module(),
+          aws_client: module(),
           http_client: module(),
           name: String.t(),
-          parser: module()
+          decoder: module()
         }
 
-  defstruct client: SecretsManagerProvider.ExAwsClient,
+  defstruct aws_client: SecretsManagerProvider.ExAwsClient,
             http_client: SecretsManagerProvider.HackneyClient,
             name: nil,
-            parser: Toml
+            decoder: Toml
 
   @doc """
   Returns a new `Configuration` struct with defaults.

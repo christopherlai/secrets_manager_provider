@@ -8,9 +8,10 @@ defmodule SecretsManagerProvider.ConfigurationTest do
       config = Configuration.new([{:name, "secret/name"}])
 
       assert config == %Configuration{
-               client: SecretsManagerProvider.ExAwsClient,
+               aws_client: SecretsManagerProvider.ExAwsClient,
+               http_client: SecretsManagerProvider.HackneyClient,
                name: "secret/name",
-               parser: Toml
+               decoder: Toml
              }
     end
 
@@ -20,9 +21,10 @@ defmodule SecretsManagerProvider.ConfigurationTest do
       config = Configuration.new([{:name, {:system, "SECRET_NAME"}}])
 
       assert config == %Configuration{
-               client: SecretsManagerProvider.ExAwsClient,
+               aws_client: SecretsManagerProvider.ExAwsClient,
+               http_client: SecretsManagerProvider.HackneyClient,
                name: "secret/name",
-               parser: Toml
+               decoder: Toml
              }
     end
   end
