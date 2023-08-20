@@ -19,4 +19,6 @@ defmodule SecretsManagerProvider.HttpClient do
               {:ok, %{status_code: pos_integer(), headers: any()}}
               | {:ok, %{status_code: pos_integer(), headers: any(), body: binary()}}
               | {:error, %{reason: any()}}
+
+  def init(configuration), do: configuration.http_client.init(configuration)
 end

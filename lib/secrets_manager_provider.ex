@@ -7,14 +7,15 @@ defmodule SecretsManagerProvider do
 
   import SecretsManagerProvider.Utils, only: [to_keyword: 1]
   alias SecretsManagerProvider.Configuration
+  alias SecretsManagerProvider.AwsClient
+  alias SecretsManagerProvider.HttpClient
 
   @impl true
   def init(args) do
-    configuration = Configuration.new(args)
-
-    configuration
-    |> configuration.http_client.init()
-    |> configuration.client.init()
+    args
+    |> Configuration.new()
+    |> HttpClient.init()
+    |> AwsClient.init()
   end
 
   @impl true
