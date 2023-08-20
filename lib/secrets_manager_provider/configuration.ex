@@ -6,11 +6,13 @@ defmodule SecretsManagerProvider.Configuration do
   @type args :: [{atom(), any()}]
   @type t :: %__MODULE__{
           client: module(),
+          http_client: module(),
           name: String.t(),
           parser: module()
         }
 
   defstruct client: SecretsManagerProvider.ExAwsClient,
+            http_client: SecretsManagerProvider.HackneyClient,
             name: nil,
             parser: Toml
 

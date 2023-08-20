@@ -5,27 +5,28 @@ defmodule SecretsManagerProvider do
 
   @behaviour Config.Provider
 
-  import SecretsManagerProvider.Utils, only: [to_keyword: 1]
+  alias SecretsManagerProvider.Transformer
   alias SecretsManagerProvider.Configuration
+  alias SecretsManagerProvider.AwsClient
+  alias SecretsManagerProvider.HttpClient
+  alias SecretsManagerProvider.Decoder
 
   @impl true
-  def init(args), do: args
-
-  @impl true
-  def load(config, args) do
-    {:ok, _deps} = Application.ensure_all_started(:hackney)
-    {:ok, _deps} = Application.ensure_all_started(:ex_aws)
-    configuration = Configuration.new(args)
-
-    configuration
-    |> Map.get(:name)
-    |> configuration.client.get_secrets()
-    |> configuration.parser.decode!()
-    |> to_keyword()
-    |> merge_configs(config)
+  def init(args) do
+    args
+    |> Configuration.new()
+    |> HttpClient.init()
+    |> AwsClient.init()
   end
 
-  defp merge_configs(secrets, config) do
-    Config.Reader.merge(config, secrets)
+  @impl true
+  def load(config, configuration) do
+    secret_config =
+      configuration
+      |> AwsClient.get_secrets()
+      |> Decoder.decode!(configuration)
+      |> Transformer.to_keyword()
+
+    Config.Reader.merge(config, secret_config)
   end
 end

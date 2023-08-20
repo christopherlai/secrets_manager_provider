@@ -2,18 +2,25 @@ defmodule SecretsManagerProvider.ExAwsClient do
   @moduledoc """
   Default Secrets Manager client used by `SecretsManagerProvider`.
   This client uses `ExAws.SecretsManager` library and implements the
-  `SecretsManagerProvider.SecretsManagerClient` behaviour.
+  `SecretsManagerProvider.AwsClient` behaviour.
   """
 
   require Logger
 
-  @behaviour SecretsManagerProvider.SecretsManagerClient
+  @behaviour SecretsManagerProvider.AwsClient
 
   @impl true
-  def get_secrets(path) do
-    path
+  def init(configuration) do
+    {:ok, _deps} = Application.ensure_all_started(:ex_aws)
+
+    configuration
+  end
+
+  @impl true
+  def get_secrets(configuration) do
+    configuration.name
     |> ExAws.SecretsManager.get_secret_value()
-    |> ExAws.request()
+    |> ExAws.request(http_client: configuration.http_client)
     |> handle_response()
   end
 

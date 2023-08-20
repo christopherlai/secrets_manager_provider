@@ -1,6 +1,6 @@
 defmodule SecretsManagerProviderTest do
   use ExUnit.Case, async: true
-
+  alias SecretsManagerProvider.Configuration
   import Mox
 
   setup :verify_on_exit!
@@ -11,20 +11,30 @@ defmodule SecretsManagerProviderTest do
 
   describe "init/1" do
     test "returns the given path", %{name: name} do
-      assert SecretsManagerProvider.init([{:name, name}]) == [{:name, name}]
+      expected = %Configuration{
+        name: name,
+        client: SecretsManagerProvider.ExAwsClient,
+        http_client: SecretsManagerProvider.HackneyClient,
+        parser: Toml
+      }
+
+      actual = SecretsManagerProvider.init([{:name, name}])
+
+      assert actual == expected
     end
   end
 
   describe "load/2 with TOML" do
     setup %{name: name} do
-      args = [
-        {:client, SecretsManagerProvider.MockClient},
-        {:name, name},
-        {:parser, Toml}
-      ]
+      configuration = %Configuration{
+        name: name,
+        client: SecretsManagerProvider.MockAwsClient,
+        http_client: SecretsManagerProvider.HackneyClient,
+        parser: Toml
+      }
 
-      SecretsManagerProvider.MockClient
-      |> expect(:get_secrets, fn ^name ->
+      SecretsManagerProvider.MockAwsClient
+      |> expect(:get_secrets, fn ^configuration ->
         """
         [toplevel]
         sublevel = "config"
@@ -33,28 +43,32 @@ defmodule SecretsManagerProviderTest do
 
       expected = [toplevel: [sublevel: "config"]]
 
-      {:ok, args: args, expected: expected}
+      {:ok, configuration: configuration, expected: expected}
     end
 
-    test "returns keyword configurations", %{args: args, expected: expected} do
-      assert SecretsManagerProvider.load([], args) == expected
+    test "returns keyword configurations", %{configuration: configuration, expected: expected} do
+      assert SecretsManagerProvider.load([], configuration) == expected
     end
 
-    test "returns merged keyword configurations", %{args: args, expected: expected} do
-      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], args) == expected
+    test "returns merged keyword configurations", %{
+      configuration: configuration,
+      expected: expected
+    } do
+      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], configuration) == expected
     end
   end
 
   describe "load/2 with JSON" do
     setup %{name: name} do
-      args = [
-        {:client, SecretsManagerProvider.MockClient},
-        {:name, name},
-        {:parser, Jason}
-      ]
+      configuration = %Configuration{
+        name: name,
+        client: SecretsManagerProvider.MockAwsClient,
+        http_client: SecretsManagerProvider.HackneyClient,
+        parser: Jason
+      }
 
-      SecretsManagerProvider.MockClient
-      |> expect(:get_secrets, fn ^name ->
+      SecretsManagerProvider.MockAwsClient
+      |> expect(:get_secrets, fn ^configuration ->
         """
         {"toplevel": {
           "sublevel": "config"
@@ -65,15 +79,18 @@ defmodule SecretsManagerProviderTest do
 
       expected = [toplevel: [sublevel: "config"]]
 
-      {:ok, args: args, expected: expected}
+      {:ok, configuration: configuration, expected: expected}
     end
 
-    test "returns keyword configurations", %{args: args, expected: expected} do
-      assert SecretsManagerProvider.load([], args) == expected
+    test "returns keyword configurations", %{configuration: configuration, expected: expected} do
+      assert SecretsManagerProvider.load([], configuration) == expected
     end
 
-    test "returns merged keyword configurations", %{args: args, expected: expected} do
-      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], args) == expected
+    test "returns merged keyword configurations", %{
+      configuration: configuration,
+      expected: expected
+    } do
+      assert SecretsManagerProvider.load([toplevel: [sublevel: false]], configuration) == expected
     end
   end
 end

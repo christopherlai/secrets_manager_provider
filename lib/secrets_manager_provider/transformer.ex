@@ -1,4 +1,4 @@
-defmodule SecretsManagerProvider.Utils do
+defmodule SecretsManagerProvider.Transformer do
   @moduledoc """
   Utilities for converting Maps to Keywords and atomizing keys.
   """
@@ -7,6 +7,12 @@ defmodule SecretsManagerProvider.Utils do
     for {k, v} <- config do
       k = to_atom(k)
       {k, to_keyword(v)}
+    end
+  end
+
+  def to_keyword(config) when is_list(config) do
+    for v <- config do
+      to_keyword(v)
     end
   end
 
