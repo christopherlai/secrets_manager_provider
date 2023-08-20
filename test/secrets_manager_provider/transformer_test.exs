@@ -19,6 +19,24 @@ defmodule SecretsManagerProvider.TransformerTest do
     test "returns the passed value if it is not a list or map" do
       assert Transformer.to_keyword("http://database") == "http://database"
     end
+
+    test "returns keywords for a given list" do
+      expected = [
+        databases: [
+          [name: "shard1", url: "http://shard1"],
+          [name: "shard2", url: "http://shard2"]
+        ]
+      ]
+
+      config = %{
+        "databases" => [
+          %{"name" => "shard1", "url" => "http://shard1"},
+          %{"name" => "shard2", "url" => "http://shard2"}
+        ]
+      }
+
+      assert Transformer.to_keyword(config) == expected
+    end
   end
 
   describe "to_atom/1" do

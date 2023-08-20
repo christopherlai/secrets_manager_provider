@@ -10,6 +10,12 @@ defmodule SecretsManagerProvider.Transformer do
     end
   end
 
+def to_keyword(config) when is_list(config) do
+    for v <- config do
+      to_keyword(v)
+    end
+  end
+
   def to_keyword(config), do: config
 
   def to_atom(<<k::utf8, _rest::binary>> = key) when k >= ?A and k <= ?Z do
