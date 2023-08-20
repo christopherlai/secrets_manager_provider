@@ -21,8 +21,8 @@ defmodule SecretsManagerProvider do
   @impl true
   def load(config, configuration) do
     secret_config =
-      configuration.name
-      |> configuration.client.get_secrets(configuration)
+      configuration
+      |> AwsClient.get_secrets()
       |> configuration.parser.decode!()
       |> to_keyword()
 
