@@ -9,23 +9,22 @@ defmodule SecretsManagerProvider do
   alias SecretsManagerProvider.Configuration
 
   @impl true
-  def init(args), do: args
-
-  @impl true
-  def load(config, args) do
-    {:ok, _deps} = Application.ensure_all_started(:hackney)
-    {:ok, _deps} = Application.ensure_all_started(:ex_aws)
+  def init(args) do
     configuration = Configuration.new(args)
 
     configuration
-    |> Map.get(:name)
-    |> configuration.client.get_secrets()
-    |> configuration.parser.decode!()
-    |> to_keyword()
-    |> merge_configs(config)
+    |> configuration.http_client.init()
+    |> configuration.client.init()
   end
 
-  defp merge_configs(secrets, config) do
-    Config.Reader.merge(config, secrets)
+  @impl true
+  def load(config, configuration) do
+    secret_config =
+      configuration.name
+      |> configuration.client.get_secrets(configuration)
+      |> configuration.parser.decode!()
+      |> to_keyword()
+
+    Config.Reader.merge(config, secret_config)
   end
 end
