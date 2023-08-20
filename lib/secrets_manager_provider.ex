@@ -5,7 +5,7 @@ defmodule SecretsManagerProvider do
 
   @behaviour Config.Provider
 
-  import SecretsManagerProvider.Utils, only: [to_keyword: 1]
+  alias SecretsManagerProvider.Transformer
   alias SecretsManagerProvider.Configuration
   alias SecretsManagerProvider.AwsClient
   alias SecretsManagerProvider.HttpClient
@@ -25,7 +25,7 @@ defmodule SecretsManagerProvider do
       configuration
       |> AwsClient.get_secrets()
       |> Decoder.decode!(configuration)
-      |> to_keyword()
+      |> Transformer.to_keyword()
 
     Config.Reader.merge(config, secret_config)
   end

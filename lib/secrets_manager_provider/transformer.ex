@@ -1,4 +1,4 @@
-defmodule SecretsManagerProvider.Utils do
+defmodule SecretsManagerProvider.Transformer do
   @moduledoc """
   Utilities for converting Maps to Keywords and atomizing keys.
   """
