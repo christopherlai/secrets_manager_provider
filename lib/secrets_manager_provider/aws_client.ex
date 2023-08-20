@@ -7,11 +7,9 @@ defmodule SecretsManagerProvider.AwsClient do
 
   @callback init(configuration :: Configuration.t()) :: Configuration.t()
 
-  @callback get_secrets(secret_name :: binary(), configuration :: Configuration.t()) :: binary()
+  @callback get_secrets(configuration :: Configuration.t()) :: binary()
 
   def init(configuration), do: configuration.client.init(configuration)
 
-  def get_secrets(configuration) do
-    configuration.client.get_secrets(configuration.name, configuration)
-  end
+  def get_secrets(configuration), do: configuration.client.get_secrets(configuration)
 end

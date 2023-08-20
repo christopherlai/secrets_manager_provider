@@ -34,7 +34,7 @@ defmodule SecretsManagerProviderTest do
       }
 
       SecretsManagerProvider.MockAwsClient
-      |> expect(:get_secrets, fn ^name, ^configuration ->
+      |> expect(:get_secrets, fn ^configuration ->
         """
         [toplevel]
         sublevel = "config"
@@ -68,7 +68,7 @@ defmodule SecretsManagerProviderTest do
       }
 
       SecretsManagerProvider.MockAwsClient
-      |> expect(:get_secrets, fn ^name, ^configuration ->
+      |> expect(:get_secrets, fn ^configuration ->
         """
         {"toplevel": {
           "sublevel": "config"

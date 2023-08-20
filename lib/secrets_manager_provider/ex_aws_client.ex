@@ -17,8 +17,8 @@ defmodule SecretsManagerProvider.ExAwsClient do
   end
 
   @impl true
-  def get_secrets(path, configuration) do
-    path
+  def get_secrets(configuration) do
+    configuration.name
     |> ExAws.SecretsManager.get_secret_value()
     |> ExAws.request(http_client: configuration.http_client)
     |> handle_response()
