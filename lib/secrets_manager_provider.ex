@@ -9,6 +9,7 @@ defmodule SecretsManagerProvider do
   alias SecretsManagerProvider.Configuration
   alias SecretsManagerProvider.AwsClient
   alias SecretsManagerProvider.HttpClient
+  alias SecretsManagerProvider.Decoder
 
   @impl true
   def init(args) do
@@ -23,7 +24,7 @@ defmodule SecretsManagerProvider do
     secret_config =
       configuration
       |> AwsClient.get_secrets()
-      |> configuration.parser.decode!()
+      |> Decoder.decode!(configuration)
       |> to_keyword()
 
     Config.Reader.merge(config, secret_config)
