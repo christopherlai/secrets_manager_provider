@@ -1,4 +1,8 @@
 defmodule SecretsManagerProvider.HackneyClient do
+  @moduledoc """
+  HackneyClient that implements `SecretsManagerProvider.AwsClient` behaviour.
+  """
+
   @behaviour SecretsManagerProvider.HttpClient
 
   @default_opts [recv_timeout: 30_000]

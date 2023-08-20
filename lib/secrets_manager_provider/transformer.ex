@@ -10,7 +10,7 @@ defmodule SecretsManagerProvider.Transformer do
     end
   end
 
-def to_keyword(config) when is_list(config) do
+  def to_keyword(config) when is_list(config) do
     for v <- config do
       to_keyword(v)
     end
